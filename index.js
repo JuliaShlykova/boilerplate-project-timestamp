@@ -23,16 +23,22 @@ app.get("/api/hello", function (req, res) {
   res.json({ greeting: "hello API" });
 });
 
-app.get("/api/:dateInput", (req, res) => {
+app.get("/api/:dateInput?", (req, res) => {
   const { dateInput } = req.params;
-  let d = new Date(dateInput);
-  if (d.toString() === "Invalid Date") {
-    let dateInputToNumber = Number(dateInput);
-    d = new Date(dateInputToNumber);
+  let d;
+  if (dateInput === undefined) {
+    d = new Date();
+  } else {
+    d = new Date(dateInput);
     if (d.toString() === "Invalid Date") {
-      res.json({ error: "Invalid Date" });
+      let dateInputToNumber = Number(dateInput);
+      d = new Date(dateInputToNumber);
+      if (d.toString() === "Invalid Date") {
+        return res.json({ error: "Invalid Date" });
+      }
     }
   }
+
   res.json({
     unix: Date.parse(d),
     utc: d.toUTCString(),
