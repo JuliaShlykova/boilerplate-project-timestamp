@@ -25,10 +25,18 @@ app.get("/api/hello", function (req, res) {
 
 app.get("/api/:dateInput", (req, res) => {
   const { dateInput } = req.params;
-  let d = Date.parse(dateInput);
-  let date = new Date(d);
-
-  res.json({ unix: d, utc: date.toUTCString() });
+  let d = new Date(dateInput);
+  if (d.toString() === "Invalid Date") {
+    let dateInputToNumber = Number(dateInput);
+    d = new Date(dateInputToNumber);
+    if (d.toString() === "Invalid Date") {
+      res.json({ error: "Invalid Date" });
+    }
+  }
+  res.json({
+    unix: Date.parse(d),
+    utc: d.toUTCString(),
+  });
 });
 
 // Listen on port set in environment variable or default to 3000
